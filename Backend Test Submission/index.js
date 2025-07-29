@@ -1,15 +1,12 @@
 const express = require('express');
 const { nanoid } = require('nanoid');
-// CORRECTED: 'toISOString' is now 'toISOString' with a capital 'S'.
-const { addMinutes, toISOString, isAfter } = require('date-fns');
+const { addMinutes, isAfter } = require('date-fns'); // Removed toISOString from import
 const { Log } = require('../Logging Middleware/logger.js');
 
 const app = express();
 const PORT = 3000;
 app.use(express.json());
 const urlDatabase = new Map();
-
-// --- API ENDPOINTS ---
 
 app.post('/shorturls', async (req, res) => {
   await Log('backend', 'info', 'route', 'POST /shorturls request received');
@@ -35,9 +32,8 @@ app.post('/shorturls', async (req, res) => {
 
   const urlData = {
     originalUrl: url,
-    // CORRECTED: Using 'toISOString' with a capital 'S'.
-    creationDate: toISOString(creationDate),
-    expiryDate: toISOString(expiryDate),
+    creationDate: creationDate.toISOString(),
+    expiryDate: expiryDate.toISOString(),
     clicks: [],
   };
 
@@ -46,11 +42,9 @@ app.post('/shorturls', async (req, res) => {
 
   res.status(201).json({
     shortLink: `http://localhost:${PORT}/${finalShortcode}`,
-    // CORRECTED: Using 'toISOString' with a capital 'S'.
-    expiry: toISOString(expiryDate),
+    expiry: expiryDate.toISOString(),
   });
 });
-
 
 app.get('/shorturls/:shortcode', async (req, res) => {
   const { shortcode } = req.params;
@@ -72,7 +66,6 @@ app.get('/shorturls/:shortcode', async (req, res) => {
   });
 });
 
-
 app.get('/:shortcode', async (req, res) => {
   const { shortcode } = req.params;
   await Log('backend', 'info', 'route', `Redirect request for code: ${shortcode}`);
@@ -90,8 +83,7 @@ app.get('/:shortcode', async (req, res) => {
   }
 
   urlData.clicks.push({
-    // CORRECTED: Using 'toISOString' with a capital 'S'.
-    timestamp: toISOString(new Date()),
+    timestamp: new Date().toISOString(),
     referrer: req.headers.referer || 'direct',
     location: 'N/A',
   });
@@ -100,6 +92,7 @@ app.get('/:shortcode', async (req, res) => {
   res.redirect(302, urlData.originalUrl);
 });
 
+console.log(">>>> VERIFICATION: THE CORRECT FILE IS LOADED <<<<");
 
 app.listen(PORT, async () => {
   await Log('backend', 'info', 'config', `Service listening on port ${PORT}`);
