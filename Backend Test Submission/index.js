@@ -4,16 +4,11 @@
 const express = require('express');
 const { nanoid } = require('nanoid');
 const { addMinutes, toISOString, isAfter } = require('date-fns');
-const { Log } = require('../Logging Middleware/logger.js'); // Relative path to the logger
+const { Log } = require('../Logging Middleware/logger.js'); 
 
 const app = express();
-const PORT = 3000; // You can use any available port
-
-// Middleware to parse incoming JSON requests
+const PORT = 3000; 
 app.use(express.json());
-
-// In-memory data store using a Map for efficient lookups.
-// The key is the shortcode, the value is an object with URL details.
 const urlDatabase = new Map();
 
 // --- API ENDPOINTS ---
